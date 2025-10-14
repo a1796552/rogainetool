@@ -8,7 +8,6 @@ class checkpoint {
         double x;
         double y;
         int value;
-        bool visited = false;
     public:
         checkpoint(int id, double x, double y, int value);
 

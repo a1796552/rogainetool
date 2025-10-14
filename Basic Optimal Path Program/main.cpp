@@ -13,7 +13,18 @@ int main() {
 
     routePlanner newMap(points, 170);
 
-    newMap.printCheckpoints();
+    routePlanner::routeResults optimalRoute = newMap.optimalPath();
+
+    std::cout << "Route: ";
+
+    if (!optimalRoute.visitedPath.empty()) {
+        for (int i = 0; i < optimalRoute.visitedPath.size(); i++) {
+            std::cout << optimalRoute.visitedPath[i] << " ";
+        }
+    }
+
+    std::cout << "\nDistance: " << optimalRoute.totalDistance << std::endl;
+    std::cout << "Points: " << optimalRoute.totalPoints << std::endl;
 
     return 0;
 }
