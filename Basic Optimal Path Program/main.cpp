@@ -11,7 +11,7 @@ int main() {
         checkpoint(3, 2, 7, 7),
     };
 
-    routePlanner newMap(points, 170);
+    routePlanner newMap(points, 14);
 
     routePlanner::routeResults optimalRoute = newMap.optimalPath();
 

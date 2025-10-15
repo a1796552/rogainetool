@@ -79,41 +79,33 @@ routePlanner::routeResults routePlanner::simulateRoute(std::vector<int> currentP
     routeResults results;
     if (currentPath.empty()) return results;
 
-    // Include the start in the printed path
+    // record start
     results.visitedPath.reserve(currentPath.size() + 1);
-    results.visitedPath.push_back(currentPath[0]); // start (usually 0)
+    results.visitedPath.push_back(currentPath[0]);
 
-    // Walk the candidate path until the next hop would exceed budget
+    // walk the path BUT require that after each hop we can still return to 0
     for (int i = 1; i < static_cast<int>(currentPath.size()); ++i) {
         const int prevIdx = currentPath[i - 1];
         const int nextIdx = currentPath[i];
 
         const double step = distanceBetweenPoints(checkpoints[prevIdx], checkpoints[nextIdx]);
-        if (results.totalDistance + step > static_cast<double>(maxDistance)) {
-            break;
+        const double backIfWeTakeNext = distanceBetweenPoints(checkpoints[nextIdx], checkpoints[0]);
+
+        // only take this hop if we can still afford to return to start afterwards
+        if (results.totalDistance + step + backIfWeTakeNext > static_cast<double>(maxDistance)) {
+            break; // stop here; the current prefix is the best feasible with return
         }
 
         results.totalDistance += step;
-        results.totalPoints += checkpoints[nextIdx].value; // score nodes after the start
+        results.totalPoints += checkpoints[nextIdx].value; // score after start
         results.visitedPath.push_back(nextIdx);
     }
 
-    // Enforce "must return to start (index 0)" within the same budget
+    // finally, return to start (always feasible by the check above)
     if (!results.visitedPath.empty()) {
         const int lastIdx = results.visitedPath.back();
-        const double back = distanceBetweenPoints(checkpoints[lastIdx], checkpoints[0]);
-
-        if (results.totalDistance + back > static_cast<double>(maxDistance)) {
-            // Hard constraint: route is invalid if you can't make it back
-            results.totalPoints = -1;        // ensures optimalPath will not pick it
-            results.totalDistance = 0.0;
-            results.visitedPath.clear();
-            return results;
-        }
-
-        results.totalDistance += back;
-        results.visitedPath.push_back(0);    // show the return to start
-        // no points for returning to start
+        results.totalDistance += distanceBetweenPoints(checkpoints[lastIdx], checkpoints[0]);
+        results.visitedPath.push_back(0);
     }
 
     return results;
