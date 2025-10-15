@@ -9,8 +9,11 @@ class checkpoint {
         double y;
         int value;
     public:
-        checkpoint(int id, double x, double y, int value);
-
+        checkpoint(int id, double x, double y);
+        double getX(){return x;}
+        double getY(){return y;}
+        int getID(){return checkpointID;}
+        int getValue(){return value;}
         friend class routePlanner;
 };
 
