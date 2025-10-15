@@ -18,7 +18,7 @@ int main() {
     std::cout << "Route: ";
 
     if (!optimalRoute.visitedPath.empty()) {
-        for (int i = 0; i < optimalRoute.visitedPath.size(); i++) {
+        for (std::size_t i = 0; i < optimalRoute.visitedPath.size(); i++) {
             std::cout << optimalRoute.visitedPath[i] << " ";
         }
     }

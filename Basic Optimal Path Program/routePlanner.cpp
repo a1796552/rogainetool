@@ -23,8 +23,7 @@ routePlanner::routeResults routePlanner::optimalPath() {
     visited[0] = true;
     std::vector<int> currentPath = {0};
     routeResults optimalPath;
-    int maxPoints = -1;
-    double maxDistance;
+    int maxPoints = -1; 
 
     allPathOptions.clear();
     recursivePathGenerator(currentPath, visited);
@@ -60,7 +59,7 @@ void routePlanner::recursivePathGenerator(std::vector<int> currentPath, std::vec
         return;
     }
     
-    for (int i = 0; i < checkpoints.size(); i++) {
+    for (std::size_t i = 0; i < checkpoints.size(); i++) {
         if (!visited[i]) {
             visited[i] = true;
             currentPath.push_back(i);
@@ -78,19 +77,46 @@ void routePlanner::recursivePathGenerator(std::vector<int> currentPath, std::vec
 // Check how many points a certain route can score
 routePlanner::routeResults routePlanner::simulateRoute(std::vector<int> currentPath) {
     routeResults results;
+    if (currentPath.empty()) return results;
 
-    for (int i = 1; i < currentPath.size(); i++) {
-        double pointDistance = distanceBetweenPoints(checkpoints[currentPath[i]], checkpoints[currentPath[i-1]]);
+    // Include the start in the printed path
+    results.visitedPath.reserve(currentPath.size() + 1);
+    results.visitedPath.push_back(currentPath[0]); // start (usually 0)
 
-        if (results.totalDistance + pointDistance > maxDistance) {
+    // Walk the candidate path until the next hop would exceed budget
+    for (int i = 1; i < static_cast<int>(currentPath.size()); ++i) {
+        const int prevIdx = currentPath[i - 1];
+        const int nextIdx = currentPath[i];
+
+        const double step = distanceBetweenPoints(checkpoints[prevIdx], checkpoints[nextIdx]);
+        if (results.totalDistance + step > static_cast<double>(maxDistance)) {
+            break;
+        }
+
+        results.totalDistance += step;
+        results.totalPoints += checkpoints[nextIdx].value; // score nodes after the start
+        results.visitedPath.push_back(nextIdx);
+    }
+
+    // Enforce "must return to start (index 0)" within the same budget
+    if (!results.visitedPath.empty()) {
+        const int lastIdx = results.visitedPath.back();
+        const double back = distanceBetweenPoints(checkpoints[lastIdx], checkpoints[0]);
+
+        if (results.totalDistance + back > static_cast<double>(maxDistance)) {
+            // Hard constraint: route is invalid if you can't make it back
+            results.totalPoints = -1;        // ensures optimalPath will not pick it
+            results.totalDistance = 0.0;
+            results.visitedPath.clear();
             return results;
         }
-        results.totalDistance += pointDistance;
-        results.totalPoints += checkpoints[currentPath[i]].value;
-        results.visitedPath.push_back(i);
 
+        results.totalDistance += back;
+        results.visitedPath.push_back(0);    // show the return to start
+        // no points for returning to start
     }
 
     return results;
 }
+
 
