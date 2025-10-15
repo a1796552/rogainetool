@@ -1,35 +1,57 @@
 #include "routePlanner.h"
 #include "checkpoint.h"
+#include <fstream>
 
-#include <vector>
+int main(int argc, char* argv[]) {
+    // Check for input file
+    if (argc != 2) {
+        std::cerr << "Missing file... Usage: " << argv[0] << " <filename>" << std::endl;
+        return 1;
+    }
 
-int main() {
-    std::vector<checkpoint> points = {
-        checkpoint(0, 0, 0, 0),
-        checkpoint(1, 1, 3, 2),
-        checkpoint(2, 3, 1, 3),
-        checkpoint(3, 4, 6, 7),
-        checkpoint(4, 6, 2, 5),
-        checkpoint(5, 7, 7, 8),
-        checkpoint(6, 2, 8, 6),
-        checkpoint(7, 9, 3, 4),
-        checkpoint(8, 10, 6, 5),
-        checkpoint(9, 12, 2, 6),
-        checkpoint(10, 13, 7, 7),
-        checkpoint(11, 15, 4, 8),
-        checkpoint(12, 16, 9, 9),
-        checkpoint(13, 18, 2, 6),
-        checkpoint(14, 19, 6, 7),
-        checkpoint(15, 20, 10, 8),
-        checkpoint(16, 5, 12, 6),
-        checkpoint(17, 8, 13, 7),
-        checkpoint(18, 11, 11, 8),
-        checkpoint(19, 14, 12, 6),
-        checkpoint(20, 3, 14, 7),
-        checkpoint(21, 6, 16, 8),
-        checkpoint(22, 10, 15, 9),
-        checkpoint(23, 15, 16, 10),
-    };
+    // Open file with error checking
+    std::string filename = argv[1];
+    std::ifstream file(filename);
+    if (!file.is_open()) {
+        std::cerr << "Error: file could not be opened" << std::endl;
+        return 1;
+    }
+
+    // Add each line of the file to vector lines
+    std::string line;
+    std::vector<std::string> lines;
+    while (std::getline(file, line)) {
+        lines.push_back(line);
+    }
+
+    file.close();
+
+    // Add points from lines into the points vector
+    std::vector<checkpoint> points;
+    try {
+        std::string token;
+        size_t pos;
+        for (auto& line : lines) {
+            std::vector<int> checkpointArgs;
+            while ((pos = line.find(", ")) != std::string::npos) {
+                token = line.substr(0, pos);
+                checkpointArgs.push_back(stoi(token));
+                line.erase(0, pos + 2);
+            }
+            checkpointArgs.push_back(stoi(line));
+
+            if (checkpointArgs.size() != 4) {
+                std::cerr << "Error: Incorrect file format" << std::endl;
+                return 1;
+            }
+            points.push_back(checkpoint(checkpointArgs[0], checkpointArgs[1], checkpointArgs[2], checkpointArgs[3]));
+        }
+    }
+    catch (...) {
+        std::cerr << "Error: Incorrect file format" << std::endl;
+        return 1;
+    }
+
 
     routePlanner newMap(points, 14);
 
