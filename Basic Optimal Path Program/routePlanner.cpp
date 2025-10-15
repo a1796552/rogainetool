@@ -1,6 +1,8 @@
 #include "routePlanner.h"
 
-routePlanner::routePlanner(std::vector<checkpoint> checkpoints, int maxDistance): checkpoints(checkpoints), maxDistance(maxDistance) {}
+routePlanner::routePlanner(std::vector<checkpoint> checkpoints, int maxDistance): checkpoints(std::move(checkpoints)), maxDistance(maxDistance), best(0) {
+    buildDistanceMatrix();   
+}
 
 double routePlanner::distanceBetweenPoints(const checkpoint& checkpoint1, const checkpoint& checkpoint2) {
     return (sqrt(pow(checkpoint1.x - checkpoint2.x, 2) + pow(checkpoint1.y - checkpoint2.y, 2)));
@@ -29,19 +31,16 @@ routePlanner::routeResults routePlanner::optimalPath() {
     recursivePathGenerator(currentPath, visited);
 
     for (auto& path : allPathOptions) {
-        if (maxPoints == -1) {
-            optimalPath = simulateRoute(path);
-        } else {
-            routeResults results = simulateRoute(path);
-            if (maxPoints < results.totalPoints) {
-                optimalPath = results;
-            }
+        routeResults r = simulateRoute(path);
+        if (r.totalPoints > maxPoints ||
+            (r.totalPoints == maxPoints && r.totalDistance < optimalPath.totalDistance)) {
+            optimalPath = r;
+            maxPoints = r.totalPoints;
         }
     }
 
     return optimalPath;
 }
-
 
 // Generates all possible paths that can be taken and adds them to vector
 void routePlanner::recursivePathGenerator(std::vector<int> currentPath, std::vector<bool> visited) {
@@ -111,4 +110,72 @@ routePlanner::routeResults routePlanner::simulateRoute(std::vector<int> currentP
     return results;
 }
 
+void routePlanner::buildDistanceMatrix() {
+    int n = static_cast<int>(checkpoints.size());
+    dist.assign(n, std::vector<double>(n, 0.0));
+    for (int i = 0; i < n; ++i) {
+        for (int j = i + 1; j < n; ++j) {
+            double d = distanceBetweenPoints(checkpoints[i], checkpoints[j]);
+            dist[i][j] = dist[j][i] = d;
+        }
+    }
+}
+
+routePlanner::routeResults routePlanner::greedyRoute() {
+    routeResults r;
+    if (checkpoints.empty()) return r;
+
+    int n = static_cast<int>(checkpoints.size());
+    std::vector<bool> used(n, false);
+    used[0] = true;
+
+    std::vector<int> order;
+    order.reserve(n + 1);
+    order.push_back(0);
+
+    double total = 0.0;
+    int points = 0;
+
+    while (true) {
+        int bestNext = -1;
+        double bestScore = -1.0;
+
+        int last = order.back();
+
+        for (int j = 1; j < n; ++j) if (!used[j]) {
+            double step = dist[last][j];
+            double back = dist[j][0];
+
+            // only consider j if we can still get home after taking it
+            if (total + step + back > static_cast<double>(maxDistance)) continue;
+
+            // objective: points gained per distance spent (small epsilon to avoid div0)
+            double gain = static_cast<double>(checkpoints[j].value);
+            double score = gain / (step + 1e-9);
+
+            if (score > bestScore) {
+                bestScore = score;
+                bestNext = j;
+            }
+        }
+
+        if (bestNext == -1) break;  // nothing else fits while allowing return
+
+        total  += dist[last][bestNext];
+        points += checkpoints[bestNext].value;
+        used[bestNext] = true;
+        order.push_back(bestNext);
+    }
+
+    // return to start (feasible by construction if we visited at least start)
+    if (!order.empty()) {
+        total += dist[order.back()][0];
+        order.push_back(0);
+    }
+
+    r.totalDistance = total;
+    r.totalPoints   = points;
+    r.visitedPath   = std::move(order);
+    return r;
+}
 

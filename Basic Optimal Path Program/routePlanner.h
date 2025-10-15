@@ -16,6 +16,9 @@ class routePlanner {
         int maxDistance;
         int best;
 
+        std::vector<std::vector<double>> dist;   // precomputed distances i<->j
+        void buildDistanceMatrix();
+
     public:
         routePlanner(std::vector<checkpoint> checkpoints, int maxDistance);
 
@@ -36,6 +39,8 @@ class routePlanner {
         void recursivePathGenerator(std::vector<int> currentPath, std::vector<bool> visited);
 
         routeResults simulateRoute(std::vector<int> currentPath);
+
+        routeResults greedyRoute();
 };
 
 #endif

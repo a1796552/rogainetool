@@ -4,27 +4,59 @@
 #include <vector>
 
 int main() {
-    std::vector<checkpoint> points {
-        checkpoint(0, 1, 3, 0),
-        checkpoint(1, 6, 4, 2),
-        checkpoint(2, 6, 5, 3),
-        checkpoint(3, 2, 7, 7),
+    std::vector<checkpoint> points = {
+        checkpoint(0, 0, 0, 0),
+        checkpoint(1, 1, 3, 2),
+        checkpoint(2, 3, 1, 3),
+        checkpoint(3, 4, 6, 7),
+        checkpoint(4, 6, 2, 5),
+        checkpoint(5, 7, 7, 8),
+        checkpoint(6, 2, 8, 6),
+        checkpoint(7, 9, 3, 4),
+        checkpoint(8, 10, 6, 5),
+        checkpoint(9, 12, 2, 6),
+        checkpoint(10, 13, 7, 7),
+        checkpoint(11, 15, 4, 8),
+        checkpoint(12, 16, 9, 9),
+        checkpoint(13, 18, 2, 6),
+        checkpoint(14, 19, 6, 7),
+        checkpoint(15, 20, 10, 8),
+        checkpoint(16, 5, 12, 6),
+        checkpoint(17, 8, 13, 7),
+        checkpoint(18, 11, 11, 8),
+        checkpoint(19, 14, 12, 6),
+        checkpoint(20, 3, 14, 7),
+        checkpoint(21, 6, 16, 8),
+        checkpoint(22, 10, 15, 9),
+        checkpoint(23, 15, 16, 10),
     };
 
     routePlanner newMap(points, 14);
 
-    routePlanner::routeResults optimalRoute = newMap.optimalPath();
+    //routePlanner::routeResults optimalRoute = newMap.optimalPath();
 
-    std::cout << "Route: ";
+    //std::cout << "Route: ";
 
-    if (!optimalRoute.visitedPath.empty()) {
-        for (std::size_t i = 0; i < optimalRoute.visitedPath.size(); i++) {
-            std::cout << optimalRoute.visitedPath[i] << " ";
-        }
-    }
+    //if (!optimalRoute.visitedPath.empty()) {
+    //    for (std::size_t i = 0; i < optimalRoute.visitedPath.size(); i++) {
+    //        std::cout << optimalRoute.visitedPath[i] << " ";
+    //    }
+    //}
 
-    std::cout << "\nDistance: " << optimalRoute.totalDistance << std::endl;
-    std::cout << "Points: " << optimalRoute.totalPoints << std::endl;
+    //std::cout << "\nDistance: " << optimalRoute.totalDistance << std::endl;
+    //std::cout << "Points: " << optimalRoute.totalPoints << std::endl;
+
+    //auto brute = newMap.optimalPath();
+    auto greedy = newMap.greedyRoute();
+
+    //std::cout << "Brute:  ";
+    //for (int id : brute.visitedPath) std::cout << id << ' ';
+    //std::cout << " | D=" << brute.totalDistance << " P=" << brute.totalPoints << "\n";
+
+    std::cout << "Greedy: ";
+    for (int id : greedy.visitedPath) std::cout << id << ' ';
+    std::cout << " | D=" << greedy.totalDistance << " P=" << greedy.totalPoints << "\n";
+
 
     return 0;
 }
