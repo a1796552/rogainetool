@@ -11,16 +11,12 @@ The purpose of this tool is for the user to input the distance they believe they
 ## Getting Started
 It is recommended to navigate to the RogaineTool subfolder and use the makefile to compile and run:
 
-cd RogaineTool
+cd RogaineTool  
 make
 
 ### Dependencies
-OpenCV is required for the map interaction. Use the following line to install:
+OpenCV is required for the map interaction. Use the following line to install:  
 sudo apt install libopencv-dev
-
-### Installing
-
-...
 
 ### Input Files
 
@@ -28,11 +24,11 @@ The program only requires an image file (jpg or png) of a rogaine map, two are p
 
 ### Executing program
 
-The program can be compiled and run using the commands:
+The program can be compiled and run using the commands:  
 ./rogaine in the root folder. 
 
-Otherwise, use the make file to recompile and check for OpenCV (THIS IS RECOMMENDED):
-cd RogaineTool
+Otherwise, use the make file to recompile and check for OpenCV (THIS IS RECOMMENDED):  
+cd RogaineTool  
 make
 
 ## Help
@@ -41,9 +37,9 @@ If the program is not running correctly, try navigating to the sub folder and us
 
 ## Authors
 
-Sunggil Kang - a1796552
-Braden Kerber - a1939333
-Jack Marschall - a1851490
+Sunggil Kang - a1796552  
+Braden Kerber - a1939333  
+Jack Marschall - a1851490  
 
 ## Version History
 * 0.3
