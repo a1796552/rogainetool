@@ -1,72 +1,64 @@
 #include "routePlanner.h"
-#include "checkpoint.h"
-#include <fstream>
+#include "interactive.h"
 
-int main(int argc, char* argv[]) {
-    // Check for input file
-    if (argc != 2) {
-        std::cerr << "Missing file... Usage: " << argv[0] << " <filename>" << std::endl;
-        return 1;
-    }
+int main() {
 
-    // Open file with error checking
-    std::string filename = argv[1];
-    std::ifstream file(filename);
-    if (!file.is_open()) {
-        std::cerr << "Error: file could not be opened" << std::endl;
-        return 1;
-    }
+    std::cout<<"Welcome to the Rogaine Route Planner Tool!"<<std::endl;
+    std::cout<<"The purpose of this tool is to help plan an optimal route for a rogaine"<<std::endl;
+    std::cout<<"based upon a photo of the map and the control points selected by you. The steps are as follows: "<<std::endl<<std::endl;
+    std::cout<<"1. Input the name of the file including the filetype (e.g. mountcrawford.png)"<<std::endl<<std::endl;
+    std::cout<<"2. Input how far you would like to travel in kilometres (e.g. 12, 30, 75)."<<std::endl<<std::endl;
+    std::cout<<"3. Select the scale of the map by placing two vertical lines 1km apart."<<std::endl<<std::endl;
+    std::cout<<"4. Select all the control points on the map or at least the points you are interested in starting with the START TRIANGLE."<<std::endl<<std::endl;
+    std::cout<<"5. The program will then output the optimal route to take and display it on the map."<<std::endl<<std::endl;
 
-    // Add each line of the file to vector lines
-    std::string line;
-    std::vector<std::string> lines;
-    while (std::getline(file, line)) {
-        lines.push_back(line);
-    }
-
-    file.close();
-
-    // Add points from lines into the points vector
-    std::vector<checkpoint> points;
-    try {
-        std::string token;
-        size_t pos;
-        for (auto& line : lines) {
-            std::vector<int> checkpointArgs;
-            while ((pos = line.find(", ")) != std::string::npos) {
-                token = line.substr(0, pos);
-                checkpointArgs.push_back(stoi(token));
-                line.erase(0, pos + 2);
-            }
-            checkpointArgs.push_back(stoi(line));
-
-            if (checkpointArgs.size() != 4) {
-                std::cerr << "Error: Incorrect file format" << std::endl;
-                return 1;
-            }
-            points.push_back(checkpoint(checkpointArgs[0], checkpointArgs[1], checkpointArgs[2], checkpointArgs[3]));
+    cv::Mat image;
+    std::string filename = "";
+    while(true){
+        std::cout<<"Please enter the map file name including the extension: ";
+        std::cin>>filename;
+        image = cv::imread(filename);
+        if(image.empty()){
+            std::cout<<"Not a valid file name"<<std::endl;
+        }else{
+            break;
         }
     }
-    catch (...) {
-        std::cerr << "Error: Incorrect file format" << std::endl;
-        return 1;
+
+    int distance = 0;
+    while(true){
+        std::cout<<"Please enter the distance you wish to travel in km: ";
+        std::cin>>distance;
+        if(distance>0){
+            break;
+        }else{
+            std::cout<<"Please enter a valid positive integer."<<std::endl;
+        }
     }
 
+    int scale=getScale(image);
+    distance*=scale;
+    std::vector<checkpoint> points=getPoints(image);
 
-    routePlanner newMap(points, 14);
+    routePlanner newMap(points, distance);
+    auto greedy = newMap.greedyRoute();
 
-    // Run greedy algorithm if there are more than 9 checkpoints, else run brute
-    if (points.size() < 10) {
-        auto brute = newMap.optimalPath();
-        std::cout << "Brute:  ";
-        for (int id : brute.visitedPath) std::cout << id << ' ';
-        std::cout << " | D=" << brute.totalDistance << " P=" << brute.totalPoints << "\n";
-    } else {
-        auto greedy = newMap.greedyRoute();
-        std::cout << "Greedy: ";
-        for (int id : greedy.visitedPath) std::cout << id << ' ';
-        std::cout << " | D=" << greedy.totalDistance << " P=" << greedy.totalPoints << "\n";
+    int prev = -1;
+    std::cout<<"\n\nThe most efficient route is from the start: "<<std::endl;
+    for (int id : greedy.visitedPath){
+        if(prev==-1){
+        }else{
+            std::cout<< "Control: "<<points[id].getID();
+            double dx = points[id].getX()-points[prev].getX();
+            double dy = points[id].getY()-points[prev].getY();
+            double dist = std::sqrt(dx*dx+dy*dy);
+            std::cout << ". Distance from previous: "<<std::fixed<<std::setprecision(1)<<pixToKilometres(dist, scale)*1000 << " metres"<<std::endl;
+        }
+        prev = id;
     }
+    std::cout<<"\nTotal Distance: "<<std::fixed<<std::setprecision(3)<<pixToKilometres(greedy.totalDistance,scale)<<" kilometres"<<std::endl;
+    std::cout<<"Total Points: "<<greedy.totalPoints<<std::endl<<std::endl;
 
+    displayRoute(image, points, greedy.visitedPath);
     return 0;
 }

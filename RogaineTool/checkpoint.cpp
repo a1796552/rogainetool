@@ -1,3 +1,3 @@
 #include "checkpoint.h"
 
-checkpoint::checkpoint(int id, double x, double y, int value): checkpointID(id), x(x), y(y), value(value) {}
+checkpoint::checkpoint(int id, double x, double y): checkpointID(id), x(x), y(y) {value = (checkpointID/10)*10;}

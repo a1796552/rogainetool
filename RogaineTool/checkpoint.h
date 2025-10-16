@@ -9,8 +9,11 @@ class checkpoint {
         double y;
         int value;
     public:
-        checkpoint(int id, double x, double y, int value);
-
+        checkpoint(int id, double x, double y);
+        double getX() const {return x;}
+        double getY() const {return y;}
+        int getID() const {return checkpointID;}
+        int getValue() const {return value;}
         friend class routePlanner;
 };
 
