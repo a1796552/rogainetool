@@ -8,15 +8,12 @@ double routePlanner::distanceBetweenPoints(const checkpoint& checkpoint1, const 
     return (sqrt(pow(checkpoint1.x - checkpoint2.x, 2) + pow(checkpoint1.y - checkpoint2.y, 2)));
 }
 
-void routePlanner::addCheckpoint(checkpoint newCheckpoint) {
-    checkpoints.push_back(newCheckpoint);
-}
-
-void routePlanner::printCheckpoints() {
+// May be deleteted if not used 
+/*void routePlanner::printCheckpoints() {
     for (auto& point : checkpoints) {
         std::cout << point.checkpointID << ", (" << point.x << "," << point.y << "), " << point.value << std::endl;
     }
-}
+}*/
 
 /* Generates all possible pathways then simulates each one and returns the largest */
 routePlanner::routeResults routePlanner::optimalPath() {
