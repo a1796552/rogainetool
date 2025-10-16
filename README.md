@@ -16,7 +16,9 @@ This tool requires OpenCV which can be installed using
 sudo apt install libopencv-dev
 ```
 and will be checked by the makefile.  
-The program also uses a Rogaine map in either JPG or PNG format, two have been provided called map.png and map2.png. More maps can be found at the SA Rogaining Website
+  
+The program also uses a Rogaine map in either JPG or PNG format, two have been provided called map.png and map2.png.  
+More maps can be found at the SA Rogaining Website
 
 ### Executing The Program
 
