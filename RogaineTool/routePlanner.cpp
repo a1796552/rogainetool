@@ -8,13 +8,6 @@ double routePlanner::distanceBetweenPoints(const checkpoint& checkpoint1, const 
     return (sqrt(pow(checkpoint1.x - checkpoint2.x, 2) + pow(checkpoint1.y - checkpoint2.y, 2)));
 }
 
-// May be deleteted if not used 
-/*void routePlanner::printCheckpoints() {
-    for (auto& point : checkpoints) {
-        std::cout << point.checkpointID << ", (" << point.x << "," << point.y << "), " << point.value << std::endl;
-    }
-}*/
-
 /* Generates all possible pathways then simulates each one and returns the largest */
 routePlanner::routeResults routePlanner::optimalPath() {
     allPathOptions.clear();
@@ -49,12 +42,13 @@ void routePlanner::recursivePathGenerator(std::vector<int> currentPath, std::vec
             break;
         }
     }
-    
+    // All paths discovered
     if (visitedAll) {
         allPathOptions.push_back(currentPath);
         return;
     }
     
+    // Recursively call for each possible paths
     for (std::size_t i = 0; i < checkpoints.size(); i++) {
         if (!visited[i]) {
             visited[i] = true;
@@ -66,7 +60,6 @@ void routePlanner::recursivePathGenerator(std::vector<int> currentPath, std::vec
             visited[i] = false;
         }
     }
-
     return;
 }
 

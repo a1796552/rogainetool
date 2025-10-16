@@ -41,24 +41,51 @@ int main() {
     std::vector<checkpoint> points=getPoints(image);
 
     routePlanner newMap(points, distance);
-    auto greedy = newMap.greedyRoute();
-
+    
     int prev = -1;
     std::cout<<"\n\nThe most efficient route is from the start: "<<std::endl;
-    for (int id : greedy.visitedPath){
-        if(prev==-1){
-        }else{
-            std::cout<< "Control: "<<points[id].getID();
-            double dx = points[id].getX()-points[prev].getX();
-            double dy = points[id].getY()-points[prev].getY();
-            double dist = std::sqrt(dx*dx+dy*dy);
-            std::cout << ". Distance from previous: "<<std::fixed<<std::setprecision(1)<<pixToKilometres(dist, scale)*1000 << " metres"<<std::endl;
+    // Use greedy algorithm if more than 10 points
+    if (points.size() > 9) {
+        auto greedy = newMap.greedyRoute();
+        for (int id : greedy.visitedPath){
+            if(prev==-1){
+            }else{
+                std::cout<< "Control: "<<points[id].getID();
+                double dx = points[id].getX()-points[prev].getX();
+                double dy = points[id].getY()-points[prev].getY();
+                double dist = std::sqrt(dx*dx+dy*dy);
+                std::cout << ". Distance from previous: "<<std::fixed<<std::setprecision(1)<<pixToKilometres(dist, scale)*1000 << " metres"<<std::endl;
+            }
+            prev = id;
         }
-        prev = id;
-    }
-    std::cout<<"\nTotal Distance: "<<std::fixed<<std::setprecision(3)<<pixToKilometres(greedy.totalDistance,scale)<<" kilometres"<<std::endl;
-    std::cout<<"Total Points: "<<greedy.totalPoints<<std::endl<<std::endl;
+        std::cout << "\nGreedy algorithm used" << std::endl;
+        std::cout<<"\nTotal Distance: "<<std::fixed<<std::setprecision(3)<<pixToKilometres(greedy.totalDistance,scale)<<" kilometres"<<std::endl;
+        std::cout<<"Total Points: "<<greedy.totalPoints<<std::endl<<std::endl;
 
-    displayRoute(image, points, greedy.visitedPath);
+        displayRoute(image, points, greedy.visitedPath);
+    } else {
+    // Use brute force algorithm if 9 or less points
+        auto brute = newMap.greedyRoute();
+        for (int id : brute.visitedPath){
+            if(prev==-1){
+            }else{
+                std::cout<< "Control: "<<points[id].getID();
+                double dx = points[id].getX()-points[prev].getX();
+                double dy = points[id].getY()-points[prev].getY();
+                double dist = std::sqrt(dx*dx+dy*dy);
+                std::cout << ". Distance from previous: "<<std::fixed<<std::setprecision(1)<<pixToKilometres(dist, scale)*1000 << " metres"<<std::endl;
+            }
+            prev = id;
+        }
+        std::cout << "\nBrute force algorithm used" << std::endl;
+        std::cout<<"\nTotal Distance: "<<std::fixed<<std::setprecision(3)<<pixToKilometres(brute.totalDistance,scale)<<" kilometres"<<std::endl;
+        std::cout<<"Total Points: "<<brute.totalPoints<<std::endl<<std::endl;
+
+        displayRoute(image, points, brute.visitedPath);
+
+    }
+
+    
+
     return 0;
 }
