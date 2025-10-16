@@ -1,0 +1,18 @@
+Rogaine Tool - Jack Marschall Summary
+Process of Project Development
+I initially came up with the idea of a tool that would tell the user the most efficient way to get the most controls on a Rogaine. I have done a few Rogaines a
+year since 2012 and so it has always been something I have wanted to create, I planned something similar a couple years ago. Normally when planning for a Rogaine,
+you generally have an idea of the maximum distance you can travel in the given time. So initial plan was to have a user set distance variable, a map to open on screen,
+and for the user to click on the map to select the control points and for the user to label them. There would then be an algorithm that takes the x and y
+coordinates and find the optimal route to collect the most points staying under the given distance. The second part of planning found that this would use 
+pixels as the unit and as images can vary greatly, a second screen was to be added for the user to determine the scale of the map to convert pixels to metres.
+A third screen was to be added with the text display of results requiring the user to go back and forth between the terminal and the image that would display
+the optimal route. Research online found that OpenCV was the best library to be used for this user interaction.
+
+Contribution and Reflection
+The group worked individually on most parts with Sunggil and Braden working on the original Brute Force approach and the second approach, Greedy algorithm,
+while I focused on the user interactions (I/O) and map displays. I already had experience with displaying images with C++ but from this, I learnt a great deal 
+with obtaining user input through graphical means. I also learnt a great deal and put a lot of thought about how to make queries or information easier to 
+understand for people who might not know about the subject that a tool addresses. I think this way of working individually worked well for me as being able
+to focus on small similar sections rather than the broader tool makes it much easier to troubleshoot and focus on. Given more time, I would like for the
+tool to be entirely graphical with a side panel in the pop up window instead of having to user the terminal for text input.
