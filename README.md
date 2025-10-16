@@ -8,28 +8,22 @@ This is a tool for use in Rogaining. Rogaines are a sporting event that takes pl
 
 The purpose of this tool is for the user to input the distance they believe they can travel in the alloted time, the scale using vertical bars, and to click the control points inputting the number for each control. This tool will return the most efficient route in terms of points under the given distance.
 
-## Getting Started
-It is recommended to navigate to the RogaineTool subfolder and use the makefile to compile and run:
-
-cd RogaineTool  
-make
+## Running The Program
 
 ### Dependencies
-OpenCV is required for the map interaction. Use the following line to install:  
+This tool requires OpenCV which can be installed using 
+```
 sudo apt install libopencv-dev
+```
+and will be checked by the makefile.  
+The program also uses a Rogaine map in either JPG or PNG format, two have been provided called map.png and map2.png. More maps can be found at the SA Rogaining Website
 
-### Input Files
+### Executing The Program
 
-The program only requires an image file (jpg or png) of a rogaine map, two are provided and more are available on the Rogaine SA website. This is configured in the terminal.
-
-### Executing program
-
-The program can be compiled and run using the commands:  
-./rogaine in the root folder. 
-
-Otherwise, use the make file to recompile and check for OpenCV (THIS IS RECOMMENDED):  
-cd RogaineTool  
+To execute the program, use the command in either root or subfolder
+```
 make
+```
 
 ## Help
 
