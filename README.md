@@ -24,6 +24,7 @@ To execute the program, use the command in either root or subfolder
 ```
 make
 ```
+The program will have a pop up window with the map, the terminal is still required for some instructions and text input  
 
 ## Help
 
