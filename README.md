@@ -39,7 +39,7 @@ map.png
 ```
 12
 ```
-3. The map will appear with an ajustable green line to set the scale of the map. Press enter once the scale is correct
+3. The map will appear with an adjustable green line to set the scale of the map. Press enter once the scale is correct
 
 4. The first point clicked will be the starting point
 
