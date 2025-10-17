@@ -28,9 +28,33 @@ make
 ```
 The program will have a pop up window with the map, the terminal is still required for some instructions and text input  
 
+### Example Of Using The Program
+
+Step by step example of using the program:
+1. A prompt will ask for a map file name. The default map file cam be used by entering:
+```
+map.png
+```
+2. A prompt will ask for the travel distance
+```
+12
+```
+3. The map will appear with an ajustable green line to set the scale of the map. Press enter once the scale is correct
+
+4. The first point clicked will be the starting point
+
+5. Click on the place on the map that you would like to place a point
+
+6. After clicking on the map go to the terminal and enter in a two digit number for that point
+
+7. Once all points have been placed on the map, press escape to run the algorithm
+The route will be shown on the map with details being printed to the terminal.
+
 ## Help
 
-If the program is not running correctly, try navigating to the sub folder and using the makefile
+If the program is not running correctly, try navigating to the sub folder and using the makefile.
+
+If the program prompts with the message that it is not responding click wait and check the terminal to make sure it is not waiting for input.
 
 ## Authors
 
@@ -39,6 +63,8 @@ Braden Kerber - a1939333
 Jack Marschall - a1851490  
 
 ## Version History
+* 0.4
+   * Changed brute force algorithm to use dynamic programming
 * 0.3
    * Added user interface to main branch
 * 0.2
