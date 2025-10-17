@@ -4,8 +4,11 @@
 #include <vector>
 #include <unordered_map>
 #include <cmath>
-#include "checkpoint.h"
 #include <iostream>
+#include <map>
+#include "checkpoint.h"
+
+
 
 
 class routePlanner {
@@ -23,20 +26,19 @@ class routePlanner {
         int maxDistance;
         int best;
 
+        std::map<std::pair<int, std::vector<bool>>, routePlanner::routeResults> DPcalculated;
+
         std::vector<std::vector<double>> dist;   // precomputed distances i<->j
         void buildDistanceMatrix();
 
     public:
         routePlanner(std::vector<checkpoint> checkpoints, int maxDistance);
 
-
         double distanceBetweenPoints(const checkpoint& checkpoint1, const checkpoint& checkpoint2);
 
         routeResults optimalPath();
 
-        void recursivePathGenerator(std::vector<int> currentPath, std::vector<bool> visited);
-
-        routeResults simulateRoute(std::vector<int> currentPath);
+        routeResults DPPathRecursive(int current, std::vector<bool> visited, double currentDistance, int currentPoints); 
 
         routeResults greedyRoute();
 };

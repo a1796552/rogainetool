@@ -1,12 +1,12 @@
 Contribution
 	I focused on the back end of the program. I designed the structure of the routePlanner and checkpoint classes and how they interacted with each other 
-    and created the brute force algorithm that builds each possible path then tests them to find the most optimum solution.
+    and created the dynamic programming optimal algorithm.
 
 Learning Experience and reflection
     The problem could be broken down into something similar to a knapsack problem with the goal being to maximise the points scored without exceeding the 
     max distance. It was interesting to get hands on experience with some of the techniques that I have been practising through the weekly problems. I also 
-    was able to recognise the advantage of implementing different algorithms for the same problem under different conditions. The brute force approach was 
-    not capable of running quickly if the amount of points exceeded 9 so there needed to be another algorithm taht would be able to give a result when the 
-    amount of points exceeded that amount. By implementing brute force for 9 or less points and greedy for 10 or more allowed for the program to get a good
+    was able to recognise the advantage of implementing different algorithms for the same problem under different conditions. The DP approach was 
+    not capable of running quickly if the amount of points exceeded 12 so there needed to be another algorithm taht would be able to give a result when the 
+    amount of points exceeded that amount. By implementing the DP for 12 or less points and greedy for 13 or more allowed for the program to get a good
     mix of accuracy for easier problems while still producing an effective soltuion for larger problems.
 	

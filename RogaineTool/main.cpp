@@ -43,12 +43,12 @@ int main() {
     routePlanner newMap(points, distance);
     routePlanner::routeResults result;
 
-    // Use brute force algorithm if less than 10 points, else use greedy algorithm
-    if (points.size() > 9) {
+    // Use brute force algorithm if less than 12 points, else use greedy algorithm
+    if (points.size() > 12) {
         std::cout << "\nGreedy algorithm used" << std::endl;
         result = newMap.greedyRoute();
     } else {
-        std::cout << "\nBrute force algorithm used" << std::endl;
+        std::cout << "\nOptimal algorithm used" << std::endl;
         result = newMap.optimalPath();
     }
 

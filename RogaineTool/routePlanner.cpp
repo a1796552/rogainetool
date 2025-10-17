@@ -8,96 +8,62 @@ double routePlanner::distanceBetweenPoints(const checkpoint& checkpoint1, const 
     return (sqrt(pow(checkpoint1.x - checkpoint2.x, 2) + pow(checkpoint1.y - checkpoint2.y, 2)));
 }
 
-/* Generates all possible pathways then simulates each one and returns the largest */
+/* Uses dynamic programming to find the best pathway between the points.
+Only use if there are less than 20 points to search */
 routePlanner::routeResults routePlanner::optimalPath() {
-    allPathOptions.clear();
     std::vector<bool> visited(checkpoints.size(), false);
     visited[0] = true;
-    std::vector<int> currentPath = {0};
-    routeResults optimalPath;
-    int maxPoints = -1; 
+    DPcalculated.clear();
 
-    allPathOptions.clear();
-    recursivePathGenerator(currentPath, visited);
-
-    for (auto& path : allPathOptions) {
-        routeResults r = simulateRoute(path);
-        if (r.totalPoints > maxPoints ||
-            (r.totalPoints == maxPoints && r.totalDistance < optimalPath.totalDistance)) {
-            optimalPath = r;
-            maxPoints = r.totalPoints;
-        }
-    }
-
-    return optimalPath;
+    return DPPathRecursive(0, visited, 0.0, 0);  
 }
 
-// Generates all possible paths that can be taken and adds them to vector
-void routePlanner::recursivePathGenerator(std::vector<int> currentPath, std::vector<bool> visited) {
-    // Check if all nodes have been visited
-    bool visitedAll = true;
-    for (bool v : visited) {
-        if (!v) {
-            visitedAll = false;
-            break;
-        }
+routePlanner::routeResults routePlanner::DPPathRecursive(int current, std::vector<bool> visited, double currentDistance, int currentPoints) {
+    // If the best has already been calculated, return the best
+    if (DPcalculated.count({current, visited})) {
+        return DPcalculated[{current, visited}];
     }
-    // All paths discovered
-    if (visitedAll) {
-        allPathOptions.push_back(currentPath);
-        return;
-    }
-    
-    // Recursively call for each possible paths
-    for (std::size_t i = 0; i < checkpoints.size(); i++) {
+
+    // Create best using current path
+    routeResults best;
+    best.totalDistance = currentDistance;
+    best.totalPoints = currentPoints;
+    best.visitedPath = {current};
+
+    // Run for every unvisited next node
+    for (int i=0; i < static_cast<int>(checkpoints.size()); i++) {
         if (!visited[i]) {
-            visited[i] = true;
-            currentPath.push_back(i);
+            // Check to make sure curent to next location to start can be reached
+            if (currentDistance + dist[current][i] + dist[i][0] <= maxDistance) {
+                visited[i] = true;
 
-            recursivePathGenerator(currentPath, visited);
+                // Call to recursively check path combinations adding to current distance and points
+                routeResults rec = DPPathRecursive(i, visited, currentDistance + dist[current][i], currentPoints + checkpoints[i].value);
+;
+                
+                // Reset to false for future recursive calls
+                visited[i] = false;
 
-            currentPath.pop_back();
-            visited[i] = false;
+                // If the total number of points is better than current best or if points are equal that distance is less than best
+                if (rec.totalPoints > best.totalPoints || (rec.totalPoints == best.totalPoints && rec.totalDistance < best.totalDistance)) {
+                    best = rec;
+                    best.visitedPath.insert(best.visitedPath.begin(), current);
+                }
+            }
         }
     }
-    return;
-}
 
-// Check how many points a certain route can score
-routePlanner::routeResults routePlanner::simulateRoute(std::vector<int> currentPath) {
-    routeResults results;
-    if (currentPath.empty()) return results;
-
-    // record start
-    results.visitedPath.reserve(currentPath.size() + 1);
-    results.visitedPath.push_back(currentPath[0]);
-
-    // walk the path BUT require that after each hop we can still return to 0
-    for (int i = 1; i < static_cast<int>(currentPath.size()); ++i) {
-        const int prevIdx = currentPath[i - 1];
-        const int nextIdx = currentPath[i];
-
-        const double step = distanceBetweenPoints(checkpoints[prevIdx], checkpoints[nextIdx]);
-        const double backIfWeTakeNext = distanceBetweenPoints(checkpoints[nextIdx], checkpoints[0]);
-
-        // only take this hop if we can still afford to return to start afterwards
-        if (results.totalDistance + step + backIfWeTakeNext > static_cast<double>(maxDistance)) {
-            break; // stop here; the current prefix is the best feasible with return
-        }
-
-        results.totalDistance += step;
-        results.totalPoints += checkpoints[nextIdx].value; // score after start
-        results.visitedPath.push_back(nextIdx);
+    // Add distance to return to start from current point if not already there
+    if (best.visitedPath.back() != 0) {
+        best.totalDistance += dist[best.visitedPath.back()][0];
+        best.visitedPath.push_back(0);
     }
 
-    // finally, return to start (always feasible by the check above)
-    if (!results.visitedPath.empty()) {
-        const int lastIdx = results.visitedPath.back();
-        results.totalDistance += distanceBetweenPoints(checkpoints[lastIdx], checkpoints[0]);
-        results.visitedPath.push_back(0);
-    }
 
-    return results;
+
+    // Store value in map for future recursive calls
+    DPcalculated[{current, visited}] = best;
+    return best;
 }
 
 void routePlanner::buildDistanceMatrix() {
