@@ -1,0 +1,22 @@
+Parts I worked on:
+I worked on the backend of the project along with Braden and I refactored and edited the existing base code
+that Braden had done. I wrote a new SimulateRoute function that only took the next leg if you were able to 
+retuyrn to the start within the budget distance set at the start. It simulated Rogaining more than it was able 
+to before. I fixed a couple of bugs such as optimalPath to actually keep the best result and update maxPoints 
+correctly. I also worked on a greedyRoute using greedy solver to solve the best optimal path when there was more 
+than 12 checkpoints where bruteforce started to time out. It grows the route from 0 and at each step picks the 
+checkpoint with the best points per extra distance. I added buildDistanceMatrix which removed the repeated distance 
+calculations and made greedy fast.
+What I learned:
+I learned how to devise a project plan with Jack at the start, I normally like to use my ideas but this time I 
+decided I wanted to play a more support role and I think I did well researching what Rogaine was and adding 
+suggestions to what and how things could be calculated on Instagram. I also learned how to refactor existing code 
+and fix bugs and add more things to it making it more optimal which is good because I assume that is what I will 
+do when I get a full time job as a computer scientist.
+What worked well:
+I think our group worked very efficiently where we all were busy with other uni assignments and work we were able 
+to work together via Instagram and use Github and updating each other when we were changing things to the code.
+Whatr could be improved next:
+I think I can be more communicating with the team and I think we could work on time management although we had plenty
+of time at the end we could have made a timeline but we managed to work it out at the end and come up with a end 
+goal/project that we are satisfied with.
