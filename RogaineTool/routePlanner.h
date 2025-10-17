@@ -9,6 +9,13 @@
 
 
 class routePlanner {
+    public:
+        struct routeResults {
+            int totalPoints = 0;
+            double totalDistance = 0;
+            std::vector<int> visitedPath;
+        };
+
     private:
         /* First point in checkpoints is the starting position */
         std::vector<checkpoint> checkpoints;
@@ -22,17 +29,8 @@ class routePlanner {
     public:
         routePlanner(std::vector<checkpoint> checkpoints, int maxDistance);
 
-        struct routeResults {
-            int totalPoints = 0;
-            double totalDistance = 0;
-            std::vector<int> visitedPath;
-        };
 
         double distanceBetweenPoints(const checkpoint& checkpoint1, const checkpoint& checkpoint2);
-
-        void addCheckpoint(checkpoint newCheckpoint);
-
-        void printCheckpoints();
 
         routeResults optimalPath();
 
